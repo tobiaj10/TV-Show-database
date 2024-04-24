@@ -1,0 +1,161 @@
+PostgreSQL commands
+
+CREATE TABLE status (
+  statusId SERIAL PRIMARY KEY,
+  statusLabel TEXT NOT NULL
+);
+
+CREATE TABLE types (
+  typeId SERIAL PRIMARY KEY,
+  categoryName TEXT NOT NULL
+);
+
+CREATE TABLE genre_types (
+  genreTypeId SERIAL PRIMARY KEY,
+  genreLabel TEXT NOT NULL
+);
+
+CREATE TABLE language_types (
+  languageTypeId SERIAL PRIMARY KEY,
+  languageLabel TEXT NOT NULL
+);
+
+CREATE TABLE link_types (
+  linkTypeId SERIAL PRIMARY KEY,
+  linkCategoryName TEXT NOT NULL
+);
+
+
+
+CREATE TABLE network_types (
+  networkTypeId SERIAL PRIMARY KEY,
+  networkName TEXT NOT NULL
+);
+
+CREATE TABLE production_company_types (
+  productionCompanyTypeId SERIAL PRIMARY KEY,
+  producerName TEXT NOT NULL
+);
+
+CREATE TABLE production_country_types (
+  productionCountryTypeId SERIAL PRIMARY KEY,
+  countryOfProduction TEXT NOT NULL
+);
+
+CREATE TABLE origin_country_types (
+  originCountryTypeId SERIAL PRIMARY KEY,
+  originalCountryName TEXT NOT NULL
+);
+
+CREATE TABLE spoken_language_types (
+  spokenLanguageTypeId SERIAL PRIMARY KEY,
+  languageSpoken TEXT NOT NULL
+);
+
+CREATE TABLE created_by_types (
+  createdById SERIAL PRIMARY KEY,
+  creatorName TEXT NOT NULL
+);
+
+CREATE TABLE shows (
+  showId SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  numberOfSeasons INTEGER NOT NULL,
+  numberOfEpisodes INTEGER NOT NULL,
+  overview TEXT,
+  adult BOOLEAN NOT NULL,
+  inProduction BOOLEAN NOT NULL,
+  originalName TEXT NOT NULL,
+  popularity REAL NOT NULL,
+  tagline TEXT,
+  episodeRunTime INTEGER NOT NULL,
+  statusId INTEGER NOT NULL,
+  typeId INTEGER NOT NULL,
+  FOREIGN KEY (statusId) REFERENCES status(statusId),
+  FOREIGN KEY (typeId) REFERENCES types(typeId)
+);
+
+CREATE TABLE genres (
+  showId INTEGER NOT NULL,
+  genreTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, genreTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (genreTypeId) REFERENCES genre_types(genreTypeId)
+);
+
+CREATE TABLE languages (
+  showId INTEGER NOT NULL,
+  languageTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, languageTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (languageTypeId) REFERENCES language_types(languageTypeId)
+);
+
+CREATE TABLE links (
+  linkTypeId INTEGER NOT NULL,
+  showId INTEGER NOT NULL,
+  linkName TEXT NOT NULL,
+  PRIMARY KEY (linkTypeId, showId),
+  FOREIGN KEY (linkTypeId) REFERENCES link_types(linkTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId)
+);
+
+CREATE TABLE networks (
+  showId INTEGER NOT NULL,
+  networkTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, networkTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (networkTypeId) REFERENCES network_types(networkTypeId)
+);
+
+CREATE TABLE production_companies (
+  showId INTEGER NOT NULL,
+  productionCompanyTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, productionCompanyTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (productionCompanyTypeId) REFERENCES production_company_types(productionCompanyTypeId)
+);
+
+CREATE TABLE production_countries (
+  showId INTEGER NOT NULL,
+  productionCountryTypeId INTEGER NOT NULL,
+  originCountryTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, productionCountryTypeId, originCountryTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (productionCountryTypeId) REFERENCES production_country_types(productionCountryTypeId),
+  FOREIGN KEY (originCountryTypeId) REFERENCES origin_country_types(originCountryTypeId)
+);
+
+CREATE TABLE spoken_languages (
+  showId INTEGER NOT NULL,
+  spokenLanguageTypeId INTEGER NOT NULL,
+  PRIMARY KEY (showId, spokenLanguageTypeId),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (spokenLanguageTypeId) REFERENCES spoken_language_types(spokenLanguageTypeId)
+);
+
+CREATE TABLE show_votes (
+  voteCount INTEGER NOT NULL,
+  voteAverage REAL NOT NULL,  
+  showId INTEGER NOT NULL,
+  PRIMARY KEY (showId),
+  FOREIGN KEY (showId) REFERENCES shows(showId)
+);
+
+CREATE TABLE created_bys (
+  showId INTEGER NOT NULL,
+  createdById INTEGER NOT NULL,
+  PRIMARY KEY (showId, createdById),
+  FOREIGN KEY (showId) REFERENCES shows(showId),
+  FOREIGN KEY (createdById) REFERENCES created_by_types(createdById)
+);
+
+CREATE TABLE air_dates (
+  isFirst BOOLEAN NOT NULL,
+  showId INTEGER NOT NULL,
+  date TEXT NOT NULL,
+  PRIMARY KEY (showId, isFirst),
+  FOREIGN KEY (showId) REFERENCES shows(showId)
+);
+
+
